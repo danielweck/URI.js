@@ -1930,10 +1930,6 @@
     var properties = ['protocol', 'username', 'password', 'hostname', 'port'];
     var basedir, i, p;
 
-    if (this._parts.urn) {
-      throw new Error('URNs do not have any generally defined hierarchical components');
-    }
-
     if (!(base instanceof URI)) {
       base = new URI(base);
     }
@@ -1941,6 +1937,7 @@
     // << Readium patch
     // "filesystem:chrome-extension:"
     //
+    
     if (this._parts.protocol == 'filesystem') {
 
       return resolved;
@@ -1952,11 +1949,16 @@
 
       if (base._parts.path.indexOf("chrome-extension:") !== -1) {
 
-          return new URI('filesystem:' + uri.toString());
+        return new URI('filesystem:' + uri.toString());
       }
 
       return uri;
     }
+
+    if (this._parts.urn) {
+      throw new Error('URNs do not have any generally defined hierarchical components');
+    }
+
     //
     // Readium patch >>
 
