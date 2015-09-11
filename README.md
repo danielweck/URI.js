@@ -199,14 +199,14 @@ If you don't like URI.js, you may like one of the following libraries. (If yours
 * [furl (Python)](https://github.com/gruns/furl)
 * [mediawiki Uri](https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/resources/mediawiki/mediawiki.Uri.js?view=markup) (needs mw and jQuery)
 * [jurlp](https://github.com/tombonner/jurlp)
-* [jsUri](http://code.google.com/p/jsuri/)
+* [jsUri](https://github.com/derek-watson/jsUri)
 
 #### URL Parsers ####
 
 * [The simple <a> URL Mutation "Hack"](http://jsfiddle.net/rodneyrehm/KkGUJ/) ([jsPerf comparison](http://jsperf.com/idl-attributes-vs-uri-js))
 * [URI Parser](http://blog.stevenlevithan.com/archives/parseuri)
 * [jQuery-URL-Parser](https://github.com/allmarkedup/jQuery-URL-Parser)
-* [Google Closure Uri](http://closure-library.googlecode.com/svn/docs/closure_goog_uri_uri.js.html)
+* [Google Closure Uri](https://google.github.io/closure-library/api/class_goog_Uri.html)
 * [URI.js by Gary Court](https://github.com/garycourt/uri-js)
 
 #### URI Template ####
@@ -243,6 +243,19 @@ URI.js is published under the [MIT license](http://www.opensource.org/licenses/m
 
 
 ## Changelog ##
+
+### 1.16.0 (July 24th 2015) ###
+
+* **SECURITY** fixing [`URI.parseHost()`](http://medialize.github.io/URI.js/docs.html#static-parseHost) to rewrite `\` to `/` as Node and Browsers do - [Issue #233](https://github.com/medialize/URI.js/pull/233)
+* fixing [`.host()`](http://medialize.github.io/URI.js/docs.html#accessors-host) and [`.authority()`](http://medialize.github.io/URI.js/docs.html#accessors-authority) to raise an error if they contain a path segment (extending [Issue #233](https://github.com/medialize/URI.js/pull/233))
+
+### 1.15.2 (July 2nd 2015) ###
+
+* fixing [`URI.parseQuery()`](http://medialize.github.io/URI.js/docs.html#static-parseQuery) to accept `?foo&foo=bar` - [Issue #220](https://github.com/medialize/URI.js/issues/220)
+* fixing [`.segmentCoded()`](http://medialize.github.io/URI.js/docs.html#accessors-segmentCoded) to encode (instead of decode) array input - [Issue #223](https://github.com/medialize/URI.js/issues/223)
+* fixing [`.normalizePath()`](http://medialize.github.io/URI.js/docs.html#normalize-path) to properly resolve `/foo/..` to `/` - [Issue #224](https://github.com/medialize/URI.js/issues/224)
+* fixing [`.relativeTo()`](http://medialize.github.io/URI.js/docs.html#relativeto) to resolve `/foo/` and `/foo/bar` to `./` instead of empty string - [Issue #226](https://github.com/medialize/URI.js/issues/226)
+* fixing `bower.json`'s `"main": "src/URI.js"` - [Issue #227](https://github.com/medialize/URI.js/issues/227)
 
 ### 1.15.1 (April 5th 2015) ###
 
