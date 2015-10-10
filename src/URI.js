@@ -1971,7 +1971,7 @@
 
       var uri = this.absoluteTo(base._parts.path);
 
-      if (base._parts.path.indexOf("chrome-extension:") !== -1) {
+      if (base._parts.path.indexOf("chrome-extension:") !== -1 || base._parts.path.indexOf("http:") !== -1 || base._parts.path.indexOf("https:") !== -1) {
 
         return new URI('filesystem:' + uri.toString());
       }
