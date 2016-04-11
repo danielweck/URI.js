@@ -376,6 +376,13 @@
     }, Error, 'Failing invalid modifier');
   });
 
+  test('Expansion errors', function() {
+    raises(function() {
+      var data = {'composite_var': ['multiple', 'values']};
+      URITemplate('{composite_var:3}').expand(data);
+    }, Error, 'Failing prefix modifier after composite variable');
+  });
+
   test('noConflict mode', function() {
     var actual_lib = URITemplate; // actual library; after loading, before noConflict()
     var unconflicted = URITemplate.noConflict();
@@ -393,6 +400,12 @@
     var data = {'hello.world.var': literal};
     var expansion = template.expand(data);
     equal(expansion, literal, 'period in varname');
+  });
+
+  test('Invalid literals', function () {
+    raises(function() {
+      URITemplate('invalid.char}acter').parse();
+    }, Error, 'Failing invalid literal');
   });
 
 })();
