@@ -2,9 +2,10 @@
 
 The release notes tracked in this document are also made available on the [releases page](https://github.com/medialize/URI.js/releases)
 
-### master
+### 1.18.5 (January 30th 2017) ###
 
 * prevent `new URI(null)` from blowing up - [PR #321](https://github.com/medialize/URI.js/issues/321)
+* fixing [`URI.withinString()`](http://medialize.github.io/URI.js/docs.html#static-withinString) to properly handle fully contained parentheses - [Issue #325](https://github.com/medialize/URI.js/issues/325)
 
 ### 1.18.4 (December 4th 2016) ###
 
