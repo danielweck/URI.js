@@ -124,6 +124,26 @@
     ok(u instanceof URI, 'instanceof URI');
     ok(u._parts.hostname !== undefined, 'host undefined');
   });
+  test('function URI(string) with invalid port "port" throws', function () {
+    raises(function () {
+      new URI('http://example.org:port');
+    }, TypeError, "throws TypeError");
+  });
+  test('function URI(string) with invalid port "0" throws', function () {
+    raises(function () {
+      new URI('http://example.org:0');
+    }, TypeError, "throws TypeError");
+  });
+  test('function URI(string) with invalid port "65536" throws', function () {
+    raises(function () {
+      new URI('http://example.org:65536');
+    }, TypeError, "throws TypeError");
+  });
+  test('function URI(string) with protocol and without hostname should throw', function () {
+    raises(function () {
+      new URI('http://');
+    }, TypeError, "throws TypeError");
+  });
   test('new URI(string, string)', function() {
     // see http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#constructor
     var u = new URI('../foobar.html', 'http://example.org/hello/world.html');
@@ -223,13 +243,20 @@
     equal(u.hostname(), 'abc.foobar.lala', 'hostname changed');
     equal(u+'', 'http://abc.foobar.lala/foo.html', 'hostname changed url');
 
-    u.hostname('');
-    equal(u.hostname(), '', 'hostname removed');
-    equal(u+'', 'http:///foo.html', 'hostname removed url');
+    u.hostname('some_where.exa_mple.org');
+    equal(u.hostname(), 'some_where.exa_mple.org', 'hostname changed');
+    equal(u+'', 'http://some_where.exa_mple.org/foo.html', 'hostname changed url');
 
     raises(function() {
       u.hostname('foo\\bar.com');
     }, TypeError, 'Failing backslash detection in hostname');
+
+    raises(function() {
+      u.hostname('');
+    }, TypeError, "Trying to set an empty hostname with http(s) protocol throws a TypeError");
+    raises(function() {
+      u.hostname(null);
+    }, TypeError, "Trying to set hostname to null with http(s) protocol throws a TypeError");
   });
   test('port', function() {
     var u = new URI('http://example.org/foo.html');
@@ -372,6 +399,11 @@
     equal(u.port(), '', 'host removed port');
     equal(u+'', 'http://some-domain.com/foo.html', 'host modified url');
 
+    u.host('some_where.exa_mple.org:44');
+    equal(u.hostname(), 'some_where.exa_mple.org', 'host modified hostname #2');
+    equal(u.port(), '44', 'port restored');
+    equal(u+'', 'http://some_where.exa_mple.org:44/foo.html', 'host modified url #2');
+
     raises(function() {
       u.host('foo\\bar.com');
     }, TypeError, 'Failing backslash detection in host');
@@ -501,6 +533,9 @@
     equal(u.hostname(), 'foo.example.org', 'changed subdomain foo.');
     equal(u+'', 'http://foo.example.org/foo.html', 'changed url foo.');
 
+    u.subdomain('foo_bar');
+    equal(u.hostname(), 'foo_bar.example.org', 'changed subdomain foo_bar');
+    equal(u+'', 'http://foo_bar.example.org/foo.html', 'changed url foo_bar');
   });
   test('domain', function() {
     var u = new URI('http://www.example.org/foo.html');
@@ -531,6 +566,13 @@
 
     u.subdomain('foo');
     equal(u.href(), 'http://foo.test/', 'subdomain set on (dot-less)');
+
+    u.subdomain('bar');
+    equal(u.href(), 'http://bar.foo.test/', 'subdomain set on foo.test');
+
+    u.domain('exam_ple.org');
+    equal(u.domain(), 'exam_ple.org', 'domain after changed domain exam_ple.org');
+    equal(u+'', 'http://bar.exam_ple.org/', 'url after changed domain exam_ple.org');
   });
   test('tld', function() {
     var u = new URI('http://www.example.org/foo.html');
@@ -1339,11 +1381,6 @@
         base: 'http://example.com/foo/bar',
         result: 'file:///C:/skyclan/snipkit'
       }, {
-        name: 'absolute passthru - generic empty-hostname - urljoin (#328)',
-        url: 'http:///foo',
-        base: 'http://example.com/foo/bar',
-        result: 'http:///foo'
-      }, {
         name: 'file paths - urljoin',
         url: 'anotherFile',
         base: 'aFile',
@@ -1662,6 +1699,36 @@
 
     deepEqual(links, expected, 'urls extracted');
     equal(result, source, 'source not modified');
+  });
+  test('ensureValidPort', function() {
+
+    function testPort(value) {
+      var result = true;
+      try {
+        URI.ensureValidPort(value);
+      } catch(e) {
+        result = false;
+      }
+
+      return result;
+    }
+
+    equal(testPort(8000), true);
+    equal(testPort('8080'), true);
+
+    equal(testPort(0), true);
+    equal(testPort(1), true);
+
+    equal(testPort(65535), true);
+    equal(testPort(65536), false);
+
+    equal(testPort(-8080), false);
+    equal(testPort('-8080'), false);
+
+    equal(testPort('aaa8080'), false);
+    equal(testPort('8080a'), false);
+
+    equal(testPort(8080.2), false);
   });
   test('noConflict', function() {
     var actual_lib = URI; // actual library; after loading, before noConflict()
